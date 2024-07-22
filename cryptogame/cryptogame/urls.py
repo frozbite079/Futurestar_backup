@@ -20,5 +20,7 @@ from regrestartion_login import views as login
 
 urlpatterns = [
     #path('admin/', admin.site.urls),
-    path('',login.login,name="login user")
+    path('',login.whitelist,name="whitelist"),
+    path('userstore',login.storeuser,name="storeuser"),
+    path('whitelistrender',login.whitelistsuccess,name="regcomp")
 ]

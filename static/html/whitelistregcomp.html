@@ -1,0 +1,45 @@
+{% load static %}
+{% csrf_token %} 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank you</title>
+    <link rel="icon" href="{% static 'css/images/crypto.ico'%}" >
+    <!--<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    -->
+    <link rel="stylesheet" href="{% static 'css/whitelist.css' %}">
+    <script src = "{% static 'js/whitelistform.js'%}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+</head>
+
+<style>
+    
+        .form-container {
+            max-width: 600px; /* Adjust this width as needed */
+            margin: 0 auto;
+            text-align: center;
+            width: 500pxd;
+        }
+
+        h1 {
+            white-space: nowrap;
+        }
+    
+
+</style>
+<body>
+    <div class="background-animation"></div>
+    <div class="form-container">
+        <h1>Thank you for being whitelist</h1>
+        <p>we will come to you soon</p>
+    </div>
+
+   
+    
+</body>
+</html>
