@@ -15,12 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from regrestartion_login import views as login
+from django.urls import path,include
 
+from regrestartion_login import views as login
 urlpatterns = [
     #path('admin/', admin.site.urls),
     path('',login.whitelist,name="whitelist"),
     path('userstore',login.storeuser,name="storeuser"),
-    path('whitelistrender',login.whitelistsuccess,name="regcomp")
+    path('whitelistrender',login.whitelistsuccess,name="regcomp"),
+    path('api/',include('Dashboard.urls'))
 ]

@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'regrestartion_login',
+    'Dashboard',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +57,7 @@ ROOT_URLCONF = 'cryptogame.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['E:/crypto/crypto_project/static/html',],
+        'DIRS': ['D:/crypto_project-1/static/html/dashboard.html',],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -77,11 +79,11 @@ WSGI_APPLICATION = 'cryptogame.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'whitelist_user',
+        'NAME': 'cryptogame',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
-        'PORT': '3307',
+        'PORT': '3306',
     }
 }
 
@@ -124,7 +126,7 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
-    "E:/crypto/crypto_project/static/",
+    "D:/crypto_project-1/static/",
 ]
 
 # Default primary key field type

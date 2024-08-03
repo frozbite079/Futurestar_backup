@@ -1,0 +1,130 @@
+{% load static  %} 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoGame</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <script src="{% static 'js/metamasklogin.js' %}" ></script>
+    <style>
+        
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #000;
+                color: #fff;
+                margin: 0;
+                padding: 0;
+            }
+            .popup {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: #333;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            }
+            .popup.show {
+                display: block;
+            }
+            .popup h2 {
+                margin: 0 0 10px;
+            }
+            .popup input[type="text"] {
+                width: 100%;
+                padding: 8px;
+                margin-bottom: 10px;
+                border: 1px solid #555;
+                border-radius: 4px;
+                background-color: #222;
+                color: #fff;
+            }
+            .popup button {
+                padding: 10px 15px;
+                background-color: #007bff;
+                border: none;
+                border-radius: 4px;
+                color: #fff;
+                cursor: pointer;
+            }
+            .popup button:hover {
+                background-color: #0056b3;
+            }
+    </style>
+    
+</head>
+<body>
+    <header>
+        <div class="left-section">
+            <div class="logo-container">
+                <img src="{% static 'Img/crypto.png' %}" alt="Game Logo" class="logo">
+                <span class="game-title">CryptoGame</span>
+            </div>
+            <div class="coin-gem">
+                <img src="{%static 'Img/coin.png' %}" alt="Coins" class="icon">
+                <span class="amount">0</span>
+            </div>
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="Search..." class="search-bar">
+        </div>
+        <div class="right-section">
+            <div class="coin-gem">
+                <img src="{% static 'Img/gem.png' %}" alt="Gems" class="icon">
+                <span class="amount">0</span>
+            </div>
+            <div class="login-container">
+                <button onclick="return loginWithMetaMask()" class="login-button">Login</button>
+            </div>
+        </div>
+    </header>
+    </header>
+    <div id="authPopup" class="popup">
+        <h2>Welcome!</h2>
+        <p>MetaMask Address: <span id="metaMaskAddress"></span></p>
+        <form id="nicknameForm">
+            <input type="text" id="nickname" placeholder="Enter your nickname" required>
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</body>
+
+<script>
+    
+        function showPopup(address) {
+            document.getElementById('metaMaskAddress').textContent = address;
+            document.getElementById('authPopup').classList.add('show');
+        }
+
+        document.getElementById('nicknameForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const nickname = document.getElementById('nickname').value;
+            const address = document.getElementById('metaMaskAddress').textContent;
+
+            fetch('/api/saveUserdata', {  
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}', 
+                },
+                body: JSON.stringify({ nickname, address }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Nickname saved successfully!');
+                    document.getElementById('authPopup').classList.remove('show');
+                } else {
+                    alert('Error saving nickname.');
+                }
+            });
+        });
+
+        
+    
+</script>
+</html>
