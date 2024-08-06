@@ -27,8 +27,16 @@ async function loginWithMetaMask() {
             console.error('Login failed:', data.message);
         }
     } else {
-        console.error('MetaMask is not installed');
+        document.getElementById('metaMaskAlertPopup').style.display = 'block';
+        
+
     }
+}
+
+function closeMetaMaskAlert() {
+    document.getElementById('metaMaskAlertPopup').style.display = 'none';
+    window.open('https://metamask.io/download.html', '_blank');
+
 }
 
 document.getElementById('nicknameForm').addEventListener('submit', function(event) {
@@ -46,11 +54,20 @@ document.getElementById('nicknameForm').addEventListener('submit', function(even
     })
     .then(response => response.json())
     .then(data => {
+        console.log("hello")
         if (data.status === 'success') {
             alert('Nickname saved successfully!');
             document.getElementById('authPopup').classList.remove('show');
-        } else {
+        } 
+        else if(data.status === "Exist"){
+
+            var error_nickname =    document.getElementById('nickname-error-tag').innerHTML = "Username is already exist!"
+            error_nickname.style.display = "block"
+
+        }
+        else {
             alert('Error saving nickname.');
         }
     });
 });
+

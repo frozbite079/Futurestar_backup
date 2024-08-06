@@ -6,5 +6,4 @@ urlpatterns = [
     path('metamask-login',dashboard,name="Dashboard"),
     path('MetaMaskUser',MetaMaskUser,name="Meta-Login"),
     path('saveUserdata',save_nickname_address,name="saveUserData")
-    
 ]

@@ -57,7 +57,7 @@ ROOT_URLCONF = 'cryptogame.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['D:/crypto_project-1/static/html/dashboard.html',],
+        'DIRS': ['/home/om/Downloads/crypto_project-1/static/html/',],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -81,7 +81,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'cryptogame',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': '1234',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -126,7 +126,7 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
-    "D:/crypto_project-1/static/",
+    "/home/om/Downloads/crypto_project-1/static/",
 ]
 
 # Default primary key field type

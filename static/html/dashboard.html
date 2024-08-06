@@ -17,7 +17,7 @@
                 margin: 0;
                 padding: 0;
             }
-            .popup {
+            .popup-for-nickname {
                 display: none;
                 position: fixed;
                 top: 50%;
@@ -28,13 +28,13 @@
                 border-radius: 8px;
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             }
-            .popup.show {
+            .popup-for-nickname.show {
                 display: block;
             }
-            .popup h2 {
+            .popup-for-nickname h2 {
                 margin: 0 0 10px;
             }
-            .popup input[type="text"] {
+            .popup-for-nickname input[type="text"] {
                 width: 100%;
                 padding: 8px;
                 margin-bottom: 10px;
@@ -43,7 +43,7 @@
                 background-color: #222;
                 color: #fff;
             }
-            .popup button {
+            .popup-for-nickname button {
                 padding: 10px 15px;
                 background-color: #007bff;
                 border: none;
@@ -51,8 +51,14 @@
                 color: #fff;
                 cursor: pointer;
             }
-            .popup button:hover {
+            .popup-for-nickname button:hover {
                 background-color: #0056b3;
+            }
+
+            .popup-for-nickname.nickname-error-tag{
+                display: None;
+                color:red;
+                
             }
     </style>
     
@@ -83,14 +89,38 @@
         </div>
     </header>
     </header>
-    <div id="authPopup" class="popup">
+    <div id="authPopup" class="popup-for-nickname">
         <h2>Welcome!</h2>
         <p>MetaMask Address: <span id="metaMaskAddress"></span></p>
         <form id="nicknameForm">
             <input type="text" id="nickname" placeholder="Enter your nickname" required>
+            <p class = "nickname-error-class" id="nickname-error-tag"></p>
             <button type="submit">Save</button>
         </form>
     </div>
+
+    <div id="metaMaskAlertPopup" class="popup">
+        <div class="popup-content">
+            <span class="close-button" onclick="closeMetaMaskAlert()">&times;</span>
+            <p>MetaMask is not installed. Please install it to continue.</p>
+            
+        </div>
+    </div> 
+
+    <section class="game-thumbnails">
+        <div class="thumbnail-box">
+            <img src="{% static 'Img/duck.jpeg' %}" alt="Game 1">
+        </div>
+        <div class="thumbnail-box">
+            <img src="{% static 'Img/comingsoon.jpeg' %}" alt="Game 2">
+        </div>
+        <div class="thumbnail-box">
+            <img src="{% static 'Img/comingsoon.jpeg' %}" alt="Game 3">
+        </div>
+        <!-- Add more thumbnail boxes as needed -->
+    </section>
+
+    
 </body>
 
 <script>
@@ -115,9 +145,21 @@
             })
             .then(response => response.json())
             .then(data => {
+
+                
                 if (data.status === 'success') {
                     alert('Nickname saved successfully!');
                     document.getElementById('authPopup').classList.remove('show');
+                }
+                else if(data.status === "Exist"){
+
+                    var error_nickname =    document.getElementById('nickname-error-tag')
+
+                    error_nickname.innerHTML = "Username is already exist!"
+                    error_nickname.style.display = "block";
+                    error_nickname.style.color = "red";
+                    
+
                 } else {
                     alert('Error saving nickname.');
                 }

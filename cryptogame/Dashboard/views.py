@@ -6,10 +6,11 @@ from django.contrib.auth.models import User
 from eth_account.messages import encode_defunct
 from eth_account import Account
 from .models import *
+
 def dashboard(request):
     
     
-    return  render(request,"D:/crypto_project-1/static/html/dashboard.html")
+    return  render(request,"/home/om/Downloads/crypto_project-1/static/html/dashboard.html")
 
 @csrf_exempt
 def MetaMaskUser(request):
@@ -45,12 +46,23 @@ def save_nickname_address(request):
         print(data)
         
         try:
-            user = MetaUser(
+            
+            
+            check_nickname = MetaUser.objects.filter(nickname=nickname).exists()
+            
+            if check_nickname:
+               
+               return JsonResponse({'status': 'Exist'})
+            else:
                 
-                address=address,nickname=nickname
-            ) 
-            user.save()
-            return JsonResponse({'status': 'success'})
+                user = MetaUser(
+                
+                    address=address,nickname=nickname
+                ) 
+                user.save()
+            
+            
+                return JsonResponse({'status': 'success'})
         except User.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'User does not exist'})
 
