@@ -73,32 +73,41 @@
             display: none;
             position: absolute;
             right: 0;
-            background-color: #333;
+            background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
             z-index: 1;
+            min-width: 160px;
         }
 
         .dropdown-menu.show {
             display: block;
         }
 
+        .dropdown-menu .nickname-display {
+            font-weight: bold;
+            padding: 10px 20px;
+            border-bottom: 1px solid #eee;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
         .dropdown-menu a {
-            color: #fff;
+            color: #333;
             padding: 10px 20px;
             text-decoration: none;
             display: block;
+            transition: background-color 0.2s;
         }
 
         .dropdown-menu a:hover {
-            background-color: #555;
+            background-color: #f1f1f1;
         }
 
-        .dropdown-menu .nickname-display {
-            font-weight: bold;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #444;
-            margin-bottom: 10px;
+        .profile-button img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
         }
     </style>
     
@@ -174,7 +183,7 @@
 </body>
 
 <script>
-    
+        var nickname_display;
         function showPopup(address) {
             document.getElementById('metaMaskAddress').textContent = address;
             document.getElementById('authPopup').classList.add('show');
@@ -201,7 +210,7 @@
                     alert('Nickname saved successfully!');
                     document.getElementById('authPopup').classList.remove('show');
 
-                    var nickname_display = data.nickname
+                    nickname_display = data.nickname
                     changeLoginToProfile();
                 }
                 else if(data.status === "Exist"){
