@@ -22,12 +22,6 @@ def MetaMaskUser(request):
         message = data.get('message')
         
         
-      
-            
-            
-            
-            
-            
                     
         message_hash = encode_defunct(text=message)
         
