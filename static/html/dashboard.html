@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CryptoGame</title>
+    <link rel="icon" type="image/png" href="{% static 'Img/crypto.png' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <script src="{% static 'js/metamasklogin.js' %}" ></script>
     <style>
@@ -17,6 +18,10 @@
                 margin: 0;
                 padding: 0;
             }
+
+            
+
+            
             .popup-for-nickname {
                 display: none;
                 position: fixed;
@@ -60,10 +65,46 @@
                 color:red;
                 
             }
+            .profile-container {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #333;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-menu a {
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #555;
+        }
+
+        .dropdown-menu .nickname-display {
+            font-weight: bold;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #444;
+            margin-bottom: 10px;
+        }
     </style>
     
 </head>
 <body>
+
     <header>
         <div class="left-section">
             <div class="logo-container">
@@ -84,11 +125,20 @@
                 <span class="amount">0</span>
             </div>
             <div class="login-container">
-                <button onclick="return loginWithMetaMask()" class="login-button">Login</button>
+                <div id="profileContainer" class="profile-container">
+                    <button id="loginButton" onclick="return loginWithMetaMask()" class="login-button">Login</button>
+                    <div id="dropdownMenu" class="dropdown-menu">
+                        <div class="nickname-display" id="nicknameDisplay"></div>
+                        <a href="#">Edit</a>
+                        <a href="#">Leaderboard</a>
+                        <a href="#">Log Out</a>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
     </header>
+    
     <div id="authPopup" class="popup-for-nickname">
         <h2>Welcome!</h2>
         <p>MetaMask Address: <span id="metaMaskAddress"></span></p>
@@ -150,6 +200,9 @@
                 if (data.status === 'success') {
                     alert('Nickname saved successfully!');
                     document.getElementById('authPopup').classList.remove('show');
+
+                    var nickname_display = data.nickname
+                    changeLoginToProfile();
                 }
                 else if(data.status === "Exist"){
 
@@ -165,6 +218,39 @@
                 }
             });
         });
+
+        function changeLoginToProfile() {
+            var loginButton = document.getElementById('loginButton');
+            var dropdownMenu = document.getElementById('dropdownMenu');
+            var nicknameDisplay = document.getElementById('nicknameDisplay');
+
+            if (loginButton) {
+                loginButton.innerHTML = '<img src="{% static 'Img/crypto.png' %}" alt="Profile" class="profile-icon">';
+                loginButton.classList.remove('login-button');
+                loginButton.classList.add('profile-button');
+                nicknameDisplay.textContent = nickname_display;
+
+                loginButton.onclick = function() {
+                    dropdownMenu.classList.toggle('show');
+                };
+                } else {
+                    console.error('Login button not found');
+                }
+            }
+            
+            window.onclick = function(event) {
+            if (!event.target.matches('.profile-icon')) {
+                var dropdowns = document.getElementsByClassName('dropdown-menu');
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        };
+
+        
 
         
     

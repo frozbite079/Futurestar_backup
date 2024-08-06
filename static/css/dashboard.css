@@ -5,6 +5,7 @@ body {
     color: #fff;
 }
 
+
 header {
     display: flex;
     justify-content: space-between;
@@ -147,3 +148,14 @@ header {
     transform: scale(1.1);
 }
 
+.profile-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.profile-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}

@@ -21,13 +21,30 @@ def MetaMaskUser(request):
         signature = data.get('signature')
         message = data.get('message')
         
-        print(data)        
+        
+      
+            
+            
+            
+            
+            
+                    
         message_hash = encode_defunct(text=message)
         
         recovered_address = Account.recover_message(message_hash, signature=signature)
 
         if recovered_address.lower() == address.lower():
             user, created = User.objects.get_or_create(username=address)
+            
+            user_addr = MetaUser.objects.filter(address=str(address)).exists()
+        
+            if user_addr:
+                    
+                    user_nickname = MetaUser.objects.get(address=address)
+                    
+
+            
+            
             
             return JsonResponse({'status': 'success', 'username': user.username})
         else:
@@ -62,7 +79,7 @@ def save_nickname_address(request):
                 user.save()
             
             
-                return JsonResponse({'status': 'success'})
+                return JsonResponse({'status': 'success','nickname':str(nickname)})
         except User.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'User does not exist'})
 
