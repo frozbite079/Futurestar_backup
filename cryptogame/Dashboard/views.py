@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
@@ -107,6 +107,10 @@ def save_nickname_address(request):
 
 
 def UserDashboard(request,username):
+    
+    '''if 'username' not in request.session or request.session['username'] != username:
+        return  redirect("dashboard")
+    '''
     
     image_path = str(username)+".png"
     

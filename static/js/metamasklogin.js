@@ -30,6 +30,8 @@ async function loginWithMetaMask() {
             var user_nickname = data.username
             
             //return handleMetaMaskResponse(url)
+            sessionStorage.setItem('username', user_nickname);
+
             window.location.href =  url+"/"+user_nickname;
 
 
