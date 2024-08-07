@@ -1,0 +1,306 @@
+{% load static  %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BitPlay</title>
+    <link rel="icon" type="image/png" href="{% static 'Img/crypto.png' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <script src="{% static 'js/metamasklogin.js' %}" ></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .popup-for-nickname {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .popup-for-nickname.show {
+            display: block;
+        }
+        .popup-for-nickname h2 {
+            margin: 0 0 10px;
+        }
+        .popup-for-nickname input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background-color: #222;
+            color: #fff;
+        }
+        .popup-for-nickname button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+        }
+        .popup-for-nickname button:hover {
+            background-color: #0056b3;
+        }
+
+        .popup-for-nickname.nickname-error-tag {
+            display: none;
+            color: red;
+        }
+
+        .profile-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+            min-width: 160px;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-menu .nickname-display {
+            font-weight: bold;
+            padding: 10px 20px;
+            border-bottom: 1px solid #eee;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .dropdown-menu a {
+            color: #333;
+            padding: 10px 20px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .profile-button img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+        .modal {
+            display: none; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #333;
+            color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            margin: 0 0 10px;
+        }
+
+        .modal-content button {
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .modal-content button:hover {
+            background-color: #0056b3;
+        }
+
+        .modal-content .cancel-button {
+            background-color: #6c757d;
+        }
+
+        .modal-content .cancel-button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="left-section">
+            <div class="logo-container">
+                <img src="{% static 'Img/crypto.png' %}" alt="Game Logo" class="logo">
+                <span class="game-title">BitPlay</span>
+            </div>
+            <div class="coin-gem">
+                <img src="{%static 'Img/coin.png' %}" alt="Coins" class="icon">
+                <span class="amount">{{coins}}</span>
+            </div>
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="Search..." class="search-bar">
+        </div>
+        <div class="right-section">
+            <div class="coin-gem">
+                <img src="{% static 'Img/gem.png' %}" alt="Gems" class="icon">
+                <span class="amount">{{gems}}</span>
+            </div>
+            <div class="login-container">
+                <div id="profileContainer" class="profile-container">
+                    <button onclick = "return dropdownmenu()" id="profileButton" class="profile-button">
+                        <img src="{% static 'profilepicture/' %}{{profile_picture}}" alt="Profile">
+                    </button>
+                    <div id="dropdownMenu" class="dropdown-menu">
+                        <div class="nickname-display" id="nicknameDisplay">@{{username}}</div>
+                        <a href="#">Settings</a>
+                        <a href="#">Leaderboard</a>
+                        <a href="#" onclick = "return logout()" id="logoutLink">Log Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirm Logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <button onclick = "return confirmlogout()"id="confirmLogoutButton">Log Out</button>
+            <button onclick = "return cancellogpout()" class="cancel-button" id="cancelLogoutButton">Cancel</button>
+        </div>
+    </div>
+    
+    
+
+    
+    <section class="game-thumbnails">
+        <div class="thumbnail-box">
+            <img src="{% static 'Img/duck.jpeg' %}" alt="Game 1">
+        </div>
+        <div class="thumbnail-box">
+            <img src="{% static 'Img/comingsoon.jpeg' %}" alt="Game 2">
+        </div>
+        <div class="thumbnail-box">
+            <img src="{% static 'Img/comingsoon.jpeg' %}" alt="Game 3">
+        </div>
+        <!-- Add more thumbnail boxes as needed -->
+    </section>
+
+    
+
+    <script>
+        var nickname_display;
+        
+        function showPopup(address) {
+            document.getElementById('metaMaskAddress').textContent = address;
+            document.getElementById('authPopup').classList.add('show');
+        }
+
+        document.getElementById('nicknameForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const nickname = document.getElementById('nickname').value;
+            const address = document.getElementById('metaMaskAddress').textContent;
+
+            fetch('/api/saveUserdata', {  
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}', 
+                },
+                body: JSON.stringify({ nickname, address }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Nickname saved successfully!');
+                    document.getElementById('authPopup').classList.remove('show');
+
+                    nickname_display = data.nickname;
+                } else if(data.status === "Exist") {
+                    var error_nickname = document.getElementById('nickname-error-tag');
+                    error_nickname.innerHTML = "Username already exists!";
+                    error_nickname.style.display = "block";
+                    error_nickname.style.color = "red";
+                } else {
+                    alert('Error saving nickname.');
+                }
+            });
+        });
+            
+        document.getElementById('profileButton').addEventListener('click', function(event) {
+            alert("hello")
+            event.stopPropagation(); 
+            var dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('show');
+
+
+    });
+
+    function dropdownmenu(){
+        var dropdownMenu = document.getElementById('dropdownMenu');
+        dropdownMenu.classList.toggle('show');
+    }
+
+        window.addEventListener('click', function(event) {
+            var dropdownMenu = document.getElementById('dropdownMenu');
+            if (dropdownMenu.classList.contains('show') && !event.target.closest('#profileButton')) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+
+        function logout(){
+            document.getElementById('logoutModal').style.display = 'flex';
+            return false
+        }
+
+        
+        function confirmlogout(){
+
+            window.location.href = '{% url 'Dashboard' %}'; 
+            return false
+        }
+
+        function cancellogpout(){
+            document.getElementById('logoutModal').style.display = 'none';
+            return false
+
+        }
+        
+
+        
+        
+       
+    </script>
+</body>
+</html>

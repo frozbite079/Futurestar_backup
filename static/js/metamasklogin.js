@@ -23,7 +23,18 @@ async function loginWithMetaMask() {
             console.log('User logged in:', data.username);
             document.getElementById('metaMaskAddress').textContent = account;
             document.getElementById('authPopup').classList.add('show');
-        } else {
+        }
+        else if(data.status ==="user_exist"){
+
+            var url = data.redirect_url
+            var user_nickname = data.username
+            
+            //return handleMetaMaskResponse(url)
+            window.location.href =  url+"/"+user_nickname;
+
+
+        }
+        else {
             console.error('Login failed:', data.message);
         }
     } else {
@@ -39,6 +50,16 @@ function closeMetaMaskAlert() {
 
 }
 
+
+function handleMetaMaskResponse(url) {
+    
+    console.log("hello")
+    
+    
+    
+   
+    
+}  
 document.getElementById('nicknameForm').addEventListener('submit', function(event) {
     event.preventDefault();
     const nickname = document.getElementById('nickname').value;

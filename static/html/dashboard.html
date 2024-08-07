@@ -5,7 +5,7 @@
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CryptoGame</title>
+    <title>BitPlay</title>
     <link rel="icon" type="image/png" href="{% static 'Img/crypto.png' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <script src="{% static 'js/metamasklogin.js' %}" ></script>
@@ -62,7 +62,7 @@
 
             .popup-for-nickname.nickname-error-tag{
                 display: None;
-                color:red;
+               color:red;
                 
             }
             .profile-container {
@@ -118,7 +118,7 @@
         <div class="left-section">
             <div class="logo-container">
                 <img src="{% static 'Img/crypto.png' %}" alt="Game Logo" class="logo">
-                <span class="game-title">CryptoGame</span>
+                <span class="game-title">BitPlay</span>
             </div>
             <div class="coin-gem">
                 <img src="{%static 'Img/coin.png' %}" alt="Coins" class="icon">
@@ -148,15 +148,7 @@
     </header>
     </header>
     
-    <div id="authPopup" class="popup-for-nickname">
-        <h2>Welcome!</h2>
-        <p>MetaMask Address: <span id="metaMaskAddress"></span></p>
-        <form id="nicknameForm">
-            <input type="text" id="nickname" placeholder="Enter your nickname" required>
-            <p class = "nickname-error-class" id="nickname-error-tag"></p>
-            <button type="submit">Save</button>
-        </form>
-    </div>
+    
 
     <div id="metaMaskAlertPopup" class="popup">
         <div class="popup-content">
@@ -179,6 +171,20 @@
         <!-- Add more thumbnail boxes as needed -->
     </section>
 
+    <div id="authPopup" class="popup-for-nickname">
+        <h2>Welcome!</h2>
+        <p>MetaMask Address: <span id="metaMaskAddress"></span></p>
+        <form id="nicknameForm">
+            <input type="text" id="nickname" placeholder="Enter your nickname" required>
+            <p class = "nickname-error-class" id="nickname-error-tag"></p>
+            <button type="submit">Save</button>
+        </form>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
     
 </body>
 
@@ -189,10 +195,14 @@
             document.getElementById('authPopup').classList.add('show');
         }
 
+        
+
         document.getElementById('nicknameForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const nickname = document.getElementById('nickname').value;
             const address = document.getElementById('metaMaskAddress').textContent;
+
+            document.getElementById('loadingOverlay').classList.add('show');
 
             fetch('/api/saveUserdata', {  
                 method: 'POST',
@@ -205,13 +215,18 @@
             .then(response => response.json())
             .then(data => {
 
+                document.getElementById('loadingOverlay').classList.remove('show');
+
                 
                 if (data.status === 'success') {
                     alert('Nickname saved successfully!');
                     document.getElementById('authPopup').classList.remove('show');
 
-                    nickname_display = data.nickname
-                    changeLoginToProfile();
+                    nickname_display = data.username
+                    url = data.redict_url
+
+                    window.location.href = url +"/"+nickname_display 
+                    
                 }
                 else if(data.status === "Exist"){
 
@@ -226,6 +241,7 @@
                     alert('Error saving nickname.');
                 }
             });
+            
         });
 
         function changeLoginToProfile() {
@@ -258,6 +274,7 @@
                 }
             }
         };
+
 
         
 

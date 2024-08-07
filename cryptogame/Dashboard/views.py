@@ -6,7 +6,10 @@ from django.contrib.auth.models import User
 from eth_account.messages import encode_defunct
 from eth_account import Account
 from .models import *
-
+import requests
+import os 
+import io
+from PIL import Image
 def dashboard(request):
     
     
@@ -32,15 +35,16 @@ def MetaMaskUser(request):
             
             user_addr = MetaUser.objects.filter(address=str(address)).exists()
         
-            if user_addr:
+            if user_addr == True:
+                user_nickname = MetaUser.objects.get(address=str(address))
+                
+                print(user_nickname.nickname)   
+                return JsonResponse({'status': 'user_exist', 'redirect_url': 'UserDashboard','username':str(user_nickname.nickname)})
                     
-                    user_nickname = MetaUser.objects.get(address=address)
-                    
+            else:
 
-            
-            
-            
-            return JsonResponse({'status': 'success', 'username': user.username})
+                return JsonResponse({'status': 'success', 'username': user.username})
+
         else:
             return JsonResponse({'status': 'error', 'message': 'Signature verification failed'})
 
@@ -54,7 +58,9 @@ def save_nickname_address(request):
         nickname = data.get('nickname')
         address = data.get('address')
 
-        print(data)
+        API_URL = "https://api-inference.huggingface.co/models/alvdansen/phantasma-anime"
+        headers = {"Authorization": "Bearer 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"}
+
         
         try:
             
@@ -68,13 +74,51 @@ def save_nickname_address(request):
                 
                 user = MetaUser(
                 
-                    address=address,nickname=nickname
+                    address=address,nickname=nickname,coins=0,gems=0
                 ) 
                 user.save()
+                
+                directory = "/home/om/Downloads/crypto_project-1/static/profilepicture/"
+                
+                def query(payload):
+                    response = requests.post(API_URL, headers=headers, json=payload)
+                    return response.content
+                image_bytes = query({
+                    "inputs": "calm nature",
+                })
+                
+                image = Image.open(io.BytesIO(image_bytes))
+                
+                save_name = str(nickname) + ".png"
+                image_name= os.path.join(directory,str(save_name))
+                image.save(image_name)
+
+                
+                
+                
+                
             
             
-                return JsonResponse({'status': 'success','nickname':str(nickname)})
+                return JsonResponse({'status':'success','redict_url': 'UserDashboard','username':nickname})
         except User.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'User does not exist'})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})    
+
+
+def UserDashboard(request,username):
+    
+    image_path = str(username)+".png"
+    
+    user_content = MetaUser.objects.get(nickname=username)
+    
+    context = {
+        'username': username,
+        'profile_picture' : image_path,
+        'coins': user_content.coins,
+        'gems': user_content.gems
+    }
+
+    return render(request,"/home/om/Downloads/crypto_project-1/static/html/user_dashboard.html",context)
+    
+    
