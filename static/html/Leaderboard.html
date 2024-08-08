@@ -1,4 +1,4 @@
-{% load static  %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,10 +11,9 @@
             }
         };
     </script>
-    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NFTArcadia</title>
+    <title>NFTArcadia Leaderboard</title>
     <link rel="icon" type="image/png" href="{% static 'Img/crypto.png' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <script src="{% static 'js/metamasklogin.js' %}" ></script>
@@ -26,48 +25,49 @@
             margin: 0;
             padding: 0;
         }
-
-        .popup-for-nickname {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #333;
+        
+        .leaderboard-container {
             padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #111;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
-        .popup-for-nickname.show {
-            display: block;
+        
+        .search-bar-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
         }
-        .popup-for-nickname h2 {
-            margin: 0 0 10px;
-        }
-        .popup-for-nickname input[type="text"] {
+
+        .search-bar-container input {
             width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
+            max-width: 400px;
+            padding: 10px;
             border: 1px solid #555;
             border-radius: 4px;
             background-color: #222;
             color: #fff;
         }
-        .popup-for-nickname button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            border: none;
-            border-radius: 4px;
-            color: #fff;
-            cursor: pointer;
-        }
-        .popup-for-nickname button:hover {
-            background-color: #0056b3;
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .popup-for-nickname.nickname-error-tag {
-            display: none;
-            color: red;
+        .leaderboard-table th, .leaderboard-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #555;
+        }
+
+        .leaderboard-table th {
+            background-color: #333;
+        }
+
+        .leaderboard-table tbody tr:nth-child(even) {
+            background-color: #222;
         }
 
         .profile-container {
@@ -115,6 +115,7 @@
             height: 30px;
             border-radius: 50%;
         }
+
         .modal {
             display: none; 
             position: fixed;
@@ -177,7 +178,7 @@
                 <span class="amount">{{coins}}</span>
             </div>
         </div>
-        <div class="search-container">
+        <div style = "display:none " class="search-container">
             <input type="text" placeholder="Search..." class="search-bar">
         </div>
         <div class="right-section">
@@ -192,8 +193,8 @@
                     </button>
                     <div id="dropdownMenu" class="dropdown-menu">
                         <div class="nickname-display" id="nicknameDisplay">@{{username}}</div>
-                        <a onclick = "return user_setting()" style = "cursor: pointer;">Settings</a>
-                        <a onclick="return leaderboard()">Leaderboard</a>
+                        <a  onclick = "return user_setting()" style = "cursor: pointer;">Settings</a>
+                        <a href="#">Leaderboard</a>
                         <a href="#" onclick = "return logout()" id="logoutLink">Log Out</a>
                     </div>
                 </div>
@@ -209,32 +210,54 @@
             <button onclick = "return cancellogpout()" class="cancel-button" id="cancelLogoutButton">Cancel</button>
         </div>
     </div>
-    
-    
 
-    
-    <section class="game-thumbnails">
-        <div class="thumbnail-box">
-            <img src="{% static 'Img/duck.jpeg' %}" alt="Game 1">
+    <div class="leaderboard-container">
+        <div class="search-bar-container">
+            <input type="text" id="searchBar" placeholder="Search for username...">
         </div>
-        <div class="thumbnail-box">
-            <img src="{% static 'Img/comingsoon.jpeg' %}" alt="Game 2">
-        </div>
-        <div class="thumbnail-box">
-            <img src="{% static 'Img/comingsoon.jpeg' %}" alt="Game 3">
-        </div>
-        <!-- Add more thumbnail boxes as needed -->
-    </section>
-
-    
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Coins</th>
+                    <th>Gems</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboardBody">
+                {% for player in rank %}
+                <tr>
+                    <td>{{ player.rank }}</td>
+                    <td>{{ player.nickname }}</td>
+                    <td>{{ player.coins }}</td>
+                    <td>{{ player.gems }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     <script>
-        var nickname_display;
-        
-        function showPopup(address) {
-            document.getElementById('metaMaskAddress').textContent = address;
-            document.getElementById('authPopup').classList.add('show');
+        function dropdownmenu(){
+            var dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('show');
         }
+
+        function user_setting(){
+            username = "{{username}}"
+
+            url = "{% url 'setting' 'username' %}".replace('username',username)
+
+            window.location.href = url
+        }
+
+        window.addEventListener('click', function(event) {
+            var dropdownMenu = document.getElementById('dropdownMenu');
+            if (dropdownMenu.classList.contains('show') && !event.target.closest('#profileButton')) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+
         function homepage(){
             try{
                 username = "{{username}}"
@@ -249,102 +272,37 @@
             
         }
 
-        document.getElementById('nicknameForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const nickname = document.getElementById('nickname').value;
-            const address = document.getElementById('metaMaskAddress').textContent;
-
-            fetch('/api/saveUserdata', {  
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}', 
-                },
-                body: JSON.stringify({ nickname, address }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert('Nickname saved successfully!');
-                    document.getElementById('authPopup').classList.remove('show');
-
-                    nickname_display = data.nickname;
-                } else if(data.status === "Exist") {
-                    var error_nickname = document.getElementById('nickname-error-tag');
-                    error_nickname.innerHTML = "Username already exists!";
-                    error_nickname.style.display = "block";
-                    error_nickname.style.color = "red";
-                } else {
-                    alert('Error saving nickname.');
-                }
-            });
-        });
-            
-        document.getElementById('profileButton').addEventListener('click', function(event) {
-            alert("hello")
-            event.stopPropagation(); 
-            var dropdownMenu = document.getElementById('dropdownMenu');
-            dropdownMenu.classList.toggle('show');
-
-
-    });
-
-    function leaderboard(){
-        try{
-            username = "{{username}}"
-            url = "{% url 'leaderboard' 'username'%}".replace('username',username)
-            window.location.href = url
-        }
-        catch(error){
-            alert(error)
-            return false
-        }
-        
-
-    }
-
-    function user_setting(){
-
-        username = "{{username}}"
-
-        url = "{% url 'setting' 'username' %}".replace('username',username)
-
-        window.location.href = url
-    }
-    function dropdownmenu(){
-        var dropdownMenu = document.getElementById('dropdownMenu');
-        dropdownMenu.classList.toggle('show');
-    }
-
-        window.addEventListener('click', function(event) {
-            var dropdownMenu = document.getElementById('dropdownMenu');
-            if (dropdownMenu.classList.contains('show') && !event.target.closest('#profileButton')) {
-                dropdownMenu.classList.remove('show');
-            }
-        });
-
         function logout(){
             document.getElementById('logoutModal').style.display = 'flex';
-            return false
+            return false;
         }
 
-        
         function confirmlogout(){
-
             window.location.href = '{% url 'Dashboard' %}'; 
-            return false
+            return false;
         }
 
         function cancellogpout(){
             document.getElementById('logoutModal').style.display = 'none';
-            return false
-
+            return false;
         }
-        
 
-        
-        
-       
+        document.getElementById('searchBar').addEventListener('input', function() {
+            var filter = this.value.toUpperCase();
+            var rows = document.getElementById('leaderboardBody').getElementsByTagName('tr');
+
+            for (var i = 0; i < rows.length; i++) {
+                var usernameCell = rows[i].getElementsByTagName('td')[1];
+                if (usernameCell) {
+                    var username = usernameCell.textContent || usernameCell.innerText;
+                    if (username.toUpperCase().indexOf(filter) > -1) {
+                        rows[i].style.display = '';
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }       
+            }
+        });
     </script>
 </body>
 </html>

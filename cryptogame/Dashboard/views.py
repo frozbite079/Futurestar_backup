@@ -9,7 +9,8 @@ from .models import *
 import requests
 import os 
 import io
-from PIL import Image
+from PIL import Image 
+
 def dashboard(request):
     
     
@@ -33,10 +34,10 @@ def MetaMaskUser(request):
         if recovered_address.lower() == address.lower():
             user, created = User.objects.get_or_create(username=address)
             
-            user_addr = MetaUser.objects.filter(address=str(address)).exists()
+            user_addr = MetaUsers.objects.filter(address=str(address)).exists()
         
             if user_addr == True:
-                user_nickname = MetaUser.objects.get(address=str(address))
+                user_nickname = MetaUsers.objects.get(address=str(address))
                 
                 print(user_nickname.nickname)   
                 return JsonResponse({'status': 'user_exist', 'redirect_url': 'UserDashboard','username':str(user_nickname.nickname)})
@@ -65,33 +66,40 @@ def save_nickname_address(request):
         try:
             
             
-            check_nickname = MetaUser.objects.filter(nickname=nickname).exists()
+            check_nickname = MetaUsers.objects.filter(nickname=nickname).exists()
             
             if check_nickname:
                
                return JsonResponse({'status': 'Exist'})
             else:
-                
-                user = MetaUser(
-                
-                    address=address,nickname=nickname,coins=0,gems=0
-                ) 
-                user.save()
-                
-                directory = "/home/om/Downloads/crypto_project-1/static/profilepicture/"
-                
-                def query(payload):
-                    response = requests.post(API_URL, headers=headers, json=payload)
-                    return response.content
-                image_bytes = query({
-                    "inputs": "calm nature",
-                })
-                
-                image = Image.open(io.BytesIO(image_bytes))
-                
-                save_name = str(nickname) + ".png"
-                image_name= os.path.join(directory,str(save_name))
-                image.save(image_name)
+                try:
+                    user = MetaUsers(
+                    
+                        address=address,nickname=nickname,coins=0,gems=0
+                    ) 
+                    user.save()
+                    
+                    directory = "/home/om/Downloads/crypto_project-1/static/profilepicture/"
+                    
+                    def query(payload):
+                        response = requests.post(API_URL, headers=headers, json=payload)
+                        
+                        return response.content
+                    image_bytes = query({
+                        "inputs": "random anime character",
+                    })
+                    
+                    image = Image.open(io.BytesIO(image_bytes))
+                    
+                    save_name = str(nickname) + ".png"
+                    image_name= os.path.join(directory,str(save_name))
+                    image.save(image_name)
+                    
+                    return JsonResponse({'status':'success','redict_url': 'UserDashboard','username':nickname})
+
+                except Exception as e:
+                    
+                    return JsonResponse({'status':str(e)})
 
                 
                 
@@ -99,7 +107,6 @@ def save_nickname_address(request):
                 
             
             
-                return JsonResponse({'status':'success','redict_url': 'UserDashboard','username':nickname})
         except User.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'User does not exist'})
 
@@ -114,7 +121,7 @@ def UserDashboard(request,username):
     
     image_path = str(username)+".png"
     
-    user_content = MetaUser.objects.get(nickname=username)
+    user_content = MetaUsers.objects.get(nickname=username)
     
     context = {
         'username': username,
@@ -125,4 +132,62 @@ def UserDashboard(request,username):
 
     return render(request,"/home/om/Downloads/crypto_project-1/static/html/user_dashboard.html",context)
     
+
+def leaderboard(request,username):
+    
+    image_path = str(username)+".png"
+    
+    user_content = MetaUsers.objects.get(nickname=username)
+    all_ranked_user = MetaUsers.objects.all()
+    
+    context = {
+        'username': username,
+        'profile_picture' : image_path,
+        'coins': user_content.coins,
+        'gems': user_content.gems,
+        'rank': all_ranked_user
+        
+    }
+    return render(request,"/home/om/Downloads/crypto_project-1/static/html/Leaderboard.html",context)
+
+def setttings(request,username):
+    
+    
+    image_path = str(username)+".png"
+    
+    user_content = MetaUsers.objects.get(nickname=username)
+    
+    context = {
+        'username': username,
+        'profile_picture' : image_path,
+        'coins': user_content.coins,
+        'gems': user_content.gems,
+        
+        
+    } 
+    return render(request,"/home/om/Downloads/crypto_project-1/static/html/setting.html",context)
+
+def changeusername(request):
+    
+    if request.method == "POST":
+        try:
+            
+            data = json.loads(request.body)
+            username = data.get('username')
+            previous_name = data.get('previoususername')
+            
+            user = MetaUsers.objects.get(nickname = previous_name)
+            
+            user.nickname = username
+            
+            user.save()
+            path = "/home/om/Downloads/crypto_project-1/static/profilepicture/"+str(previous_name)
+            os.rename(path,username)
+            
+            return JsonResponse({'status':'success'})
+        
+        except Exception as e:
+            print(e)
+            return JsonResponse({'status':str(e)})
+        
     

@@ -5,7 +5,7 @@
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BitPlay</title>
+    <title>NFTArcadia</title>
     <link rel="icon" type="image/png" href="{% static 'Img/crypto.png' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <script src="{% static 'js/metamasklogin.js' %}" ></script>
@@ -109,6 +109,38 @@
             height: 30px;
             border-radius: 50%;
         }
+        .loading-overlay {
+        display: none; /* Hide by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+        z-index: 9999; /* High z-index to cover all content */
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loading-overlay.show {
+        display: none; /* Show when needed */
+    }
+
+    .loading-overlay .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3; /* Light grey */
+        border-top: 5px solid #007bff; /* Blue */
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+        
     </style>
     
 </head>
@@ -118,7 +150,7 @@
         <div class="left-section">
             <div class="logo-container">
                 <img src="{% static 'Img/crypto.png' %}" alt="Game Logo" class="logo">
-                <span class="game-title">BitPlay</span>
+                <span class="game-title" style="cursor: pointer;" onclick = "return homepage()">NFTArcadia</span>
             </div>
             <div class="coin-gem">
                 <img src="{%static 'Img/coin.png' %}" alt="Coins" class="icon">
@@ -184,7 +216,7 @@
     <div id="loadingOverlay" class="loading-overlay">
         <div class="spinner"></div>
     </div>
-
+    
     
 </body>
 
@@ -195,15 +227,29 @@
             document.getElementById('authPopup').classList.add('show');
         }
 
-        
+        function homepage(){
+
+
+            try{
+                window.location.href = '{% url 'Dashboard' %}'
+                return true
+            }
+            catch(error){
+                alert(error)
+
+                return false
+            }
+
+        }
 
         document.getElementById('nicknameForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const nickname = document.getElementById('nickname').value;
             const address = document.getElementById('metaMaskAddress').textContent;
 
-            document.getElementById('loadingOverlay').classList.add('show');
-
+            var loading_gif = document.getElementById('loadingOverlay')
+            loading_gif.style.display = "flex"
+            
             fetch('/api/saveUserdata', {  
                 method: 'POST',
                 headers: {
@@ -215,10 +261,13 @@
             .then(response => response.json())
             .then(data => {
 
-                document.getElementById('loadingOverlay').classList.remove('show');
+                
 
                 
                 if (data.status === 'success') {
+
+                    loading_gif = document.getElementById('loadingOverlay')
+                    loading_gif.style.display="none"
                     alert('Nickname saved successfully!');
                     document.getElementById('authPopup').classList.remove('show');
 

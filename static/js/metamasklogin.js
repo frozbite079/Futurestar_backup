@@ -24,6 +24,7 @@ async function loginWithMetaMask() {
             document.getElementById('metaMaskAddress').textContent = account;
             document.getElementById('authPopup').classList.add('show');
         }
+        
         else if(data.status ==="user_exist"){
 
             var url = data.redirect_url

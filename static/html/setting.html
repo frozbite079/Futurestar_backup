@@ -1,0 +1,236 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - NFTArcadia</title>
+    <link rel="icon" type="image/png" href="{% static 'Img/crypto.png' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <style>
+        .settings-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+        .username-display {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .edit-button, .save-button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .edit-button:hover, .save-button:hover {
+            background-color: #0056b3;
+        }
+        .edit-username-input {
+            display: none;
+            width: 200px;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background-color: #222;
+            color: #fff;
+        }
+        .profile-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+            min-width: 160px;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-menu .nickname-display {
+            font-weight: bold;
+            padding: 10px 20px;
+            border-bottom: 1px solid #eee;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .dropdown-menu a {
+            color: #333;
+            padding: 10px 20px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .profile-button img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="left-section">
+            <div class="logo-container">
+                <img src="{% static 'Img/crypto.png' %}" alt="Game Logo" class="logo">
+                <span style="cursor: pointer;" onclick="return homepage()" class="game-title">NFTArcadia</span>
+            </div>
+            <div class="coin-gem">
+                <img src="{%static 'Img/coin.png' %}" alt="Coins" class="icon">
+                <span class="amount">{{ coins }}</span>
+            </div>
+        </div>
+        <div style = "display:none" class="search-container">
+            <input type="text" placeholder="Search..." class="search-bar">
+        </div>
+        <div class="right-section">
+            <div class="coin-gem">
+                <img src="{% static 'Img/gem.png' %}" alt="Gems" class="icon">
+                <span class="amount">{{ gems }}</span>
+            </div>
+            <div class="login-container">
+                <div id="profileContainer" class="profile-container">
+                    <button  onclick = "return dropdownmenu()" id="profileButton" class="profile-button">
+                        <img src="{% static 'profilepicture/' %}{{ profile_picture }}" alt="Profile">
+                    </button>
+                    <div id="dropdownMenu" class="dropdown-menu">
+                        <div class="nickname-display" id="nicknameDisplay">@{{ username }}</div>
+                        <a onclick = "return user_setting()" style = "cursor: pointer;" >Settings</a>
+                        <a onclick="return leaderboard()">Leaderboard</a>
+                        <a href="#" onclick="return logout()" id="logoutLink">Log Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="settings-container">
+        <img src="{% static 'profilepicture/' %}{{ profile_picture }}" alt="Profile Picture" class="profile-picture">
+        <div class="username-display" id="usernameDisplay">{{ username }}</div>
+        <input type="text" id="editUsernameInput" class="edit-username-input" value="{{ user.username }}">
+        <button class="edit-button" onclick="editUsername()">Edit</button>
+        <button class="save-button" onclick="saveUsername()" style="display:none;">Save</button>
+    </div>
+
+    <script>
+        function editUsername() {
+            document.getElementById('usernameDisplay').style.display = 'none';
+            document.getElementById('editUsernameInput').style.display = 'block';
+            document.querySelector('.edit-button').style.display = 'none';
+            document.querySelector('.save-button').style.display = 'inline-block';
+        }
+
+        function saveUsername() {
+            const newUsername = document.getElementById('editUsernameInput').value;
+            const csrfToken = '{{ csrf_token }}';
+            previous_name = "{{username}}"
+
+            fetch('/api/usernamechange', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ username: newUsername ,previoususername:previous_name})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+
+                    
+                    alert('Username updated successfully!');
+                    document.getElementById('usernameDisplay').textContent = newUsername;
+                    document.getElementById('usernameDisplay').style.display = 'block';
+                    document.getElementById('editUsernameInput').style.display = 'none';
+                    document.querySelector('.edit-button').style.display = 'inline-block';
+                    document.querySelector('.save-button').style.display = 'none';
+
+                    sessionStorage.setItem('username', newUsername);
+                
+                }
+                 else {
+                    console.log(data.status)
+                    alert('Error updating username.');
+                }
+            });
+        }
+
+        function user_setting(){
+
+            username = "{{username}}"
+            url = "{% url 'setting' 'username' %}".replace('username',username)
+            window.location.href = url
+        }
+        
+        function homepage() {
+            try {
+                const username = "{{ username }}";
+                const url = "{% url 'UserDashboard' 'username' %}".replace('username', username);
+                window.location.href = url;
+            } catch (error) {
+                alert(error);
+                return false;
+            }
+        }
+
+        function leaderboard() {
+            try {
+                const username = "{{ username }}";
+                const url = "{% url 'leaderboard' 'username' %}".replace('username', username);
+                window.location.href = url;
+            } catch (error) {
+                alert(error);
+                return false;
+            }
+        }
+        function dropdownmenu(){
+            var dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('show');
+        }
+        window.addEventListener('click', function(event) {
+            var dropdownMenu = document.getElementById('dropdownMenu');
+            if (dropdownMenu.classList.contains('show') && !event.target.closest('#profileButton')) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+            function logout() {
+            document.getElementById('logoutModal').style.display = 'flex';
+            return false;
+        }
+
+        function confirmlogout() {
+            window.location.href = '{% url 'Dashboard' %}';
+            return false;
+        }
+
+        function cancellogpout() {
+            document.getElementById('logoutModal').style.display = 'none';
+            return false;
+        }
+    </script>
+</body>
+</html>
