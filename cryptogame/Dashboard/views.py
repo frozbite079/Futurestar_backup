@@ -181,10 +181,16 @@ def changeusername(request):
             user.nickname = username
             
             user.save()
-            path = "/home/om/Downloads/crypto_project-1/static/profilepicture/"+str(previous_name)
-            os.rename(path,username)
-            
-            return JsonResponse({'status':'success'})
+            path = "/home/om/Downloads/crypto_project-1/static/profilepicture/"+str(previous_name)+".png"
+
+            if os.path.exists(path):
+                
+                os.rename(path,username+".png")
+                return JsonResponse({'status':'success'})
+
+            else:
+                print("error")
+                return JsonResponse({'status':'error'})
         
         except Exception as e:
             print(e)
