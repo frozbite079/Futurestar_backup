@@ -265,19 +265,19 @@
 
                 
                 if (data.status === 'success') {
-
+                    
                     loading_gif = document.getElementById('loadingOverlay')
                     loading_gif.style.display="none"
                     alert('Nickname saved successfully!');
                     document.getElementById('authPopup').classList.remove('show');
 
                     nickname_display = data.username
-                    username_id = user_id
+                    username_id = data.user_id
                     url = data.redict_url
 
                     sessionStorage.setItem('username_id', username_id);
 
-                    window.location.href = url +"/"+nickname_display+"/"+user_id 
+                    window.location.href = url +"/"+nickname_display 
                     
                 }
                 else if(data.status === "Exist"){
