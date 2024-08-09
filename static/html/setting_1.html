@@ -1,5 +1,4 @@
-{% load static  %}
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,55 +23,15 @@
             align-items: center;
             margin-top: 50px;
         }
-
-        /* Cover photo and profile picture styling */
-        .cover-photo-container {
-            position: relative;
-            width: 300px;
-            height: 200px; /* Increase the height of the cover photo */
-            background-image: url('{% static "coverimage/nature.png" %}'); /* Replace with your cover photo */
-            background-size: cover;
-            background-position: center;
-            border-radius: 8px;
-        }
-
-        
         .profile-picture {
-            position: absolute;
-            bottom: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 100px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
-            border: 3px solid #fff;
+            margin-bottom: 20px;
         }
-
         .username-display {
             font-size: 24px;
-            margin-top: 60px;
             margin-bottom: 10px;
-        }
-        .user-stats {
-            display: flex;
-            justify-content: space-around;
-            width: 300px;
-            margin-top: 100px; /* Increase margin to push it below the profile picture */
-            padding-top: 20px; /* Ensure there's enough space inside the container */
-            position: relative; /* Make sure it doesn't overlap with the profile picture */
-            z-index: 1; /* Add padding to prevent overlapping */
-                }
-
-        .user-stats .stat {
-            display: flex;
-            align-items: center;
-            color: #fff;
-        }
-
-        .user-stats .stat img {
-            width: 20px;
-            height: 20px;
-            margin-right: 5px;
         }
         .edit-button, .save-button {
             padding: 10px 15px;
@@ -83,11 +42,9 @@
             cursor: pointer;
             margin: 5px;
         }
-
         .edit-button:hover, .save-button:hover {
             background-color: #0056b3;
         }
-
         .edit-username-input {
             display: none;
             width: 200px;
@@ -98,7 +55,6 @@
             background-color: #222;
             color: #fff;
         }
-
         .profile-container {
             position: relative;
             display: inline-block;
@@ -144,8 +100,6 @@
             height: 30px;
             border-radius: 50%;
         }
-
-        /* Modal styling */
         .modal {
             display: none; 
             position: fixed;
@@ -193,26 +147,6 @@
         .modal-content .cancel-button:hover {
             background-color: #5a6268;
         }
-
-        /* Rank, Coins, and Gems styling */
-        .user-stats {
-            display: flex;
-            justify-content: space-around;
-            width: 300px;
-            margin-top: 20px;
-        }
-
-        .user-stats .stat {
-            display: flex;
-            align-items: center;
-            color: #fff;
-        }
-
-        .user-stats .stat img {
-            width: 20px;
-            height: 20px;
-            margin-right: 5px;
-        }
     </style>
 </head>
 <body>
@@ -251,26 +185,11 @@
         </div>
     </header>
     <div class="settings-container">
-        <div class="cover-photo-container">
-            <img src="{% static 'profilepicture/' %}{{ profile_picture }}" alt="Profile Picture" class="profile-picture">
-        </div>
+        <img src="{% static 'profilepicture/' %}{{ profile_picture }}" alt="Profile Picture" class="profile-picture">
         <div class="username-display" id="usernameDisplay">{{ username }}</div>
-        <div class="user-stats">
-            <div class="stat">
-                <img src="{% static 'Img/coin.png' %}" alt="Coins">
-                <span>{{ coins }} Coins</span>
-            </div>
-            <div class="stat">
-                <img src="{% static 'Img/gem.png' %}" alt="Gems">
-                <span>{{ gems }} Gems</span>
-            </div>
-            <div class="stat">
-                <span>Rank: #{{ rank }}</span>
-            </div>
-        </div>
         <input type="text" id="editUsernameInput" class="edit-username-input" value="{{ user.username }}">
         <button class="edit-button" onclick="editUsername()">Edit</button>
-        <button class="save-button" onclick="return saveUsername()" style="display:none;">Save</button>
+        <button class="save-button" onclick="saveUsername()" style="display:none;">Save</button>
     </div>
 
     <div id="logoutModal" class="modal">
@@ -291,8 +210,6 @@
 
         function saveUsername() {
             const newUsername = document.getElementById('editUsernameInput').value;
-
-        
             const csrfToken = '{{ csrf_token }}';
             previous_name = "{{username}}"
 

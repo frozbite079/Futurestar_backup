@@ -272,11 +272,12 @@
                     document.getElementById('authPopup').classList.remove('show');
 
                     nickname_display = data.username
+                    username_id = user_id
                     url = data.redict_url
 
-                    sessionStorage.setItem('username', nickname_display);
+                    sessionStorage.setItem('username_id', username_id);
 
-                    window.location.href = url +"/"+nickname_display 
+                    window.location.href = url +"/"+nickname_display+"/"+user_id 
                     
                 }
                 else if(data.status === "Exist"){

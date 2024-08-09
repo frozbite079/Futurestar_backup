@@ -7,8 +7,8 @@ urlpatterns = [
     path('MetaMaskUser',MetaMaskUser,name="Meta-Login"),
     path('saveUserdata',save_nickname_address,name="saveUserData"),
     path('UserDashboard/<username>',UserDashboard,name="UserDashboard"),
-    path('leaderboard/<username>',leaderboard,name="leaderboard"),
-    path('setting/<username>',setttings,name="setting"),
+    path('leaderboard/<id>',leaderboard,name="leaderboard"),
+    path('setting/<id>',setttings,name="setting"),
     path('usernamechange',changeusername,name="usernamechange")
     
 ]

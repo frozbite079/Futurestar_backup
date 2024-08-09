@@ -4,16 +4,16 @@
 <head>
     <script>
         window.onload = function() {
-            const sessionUsername = sessionStorage.getItem('username');
-            const serverUsername = "{{ username }}";
-            if (sessionUsername !== serverUsername) {
+            const sessionUserid = sessionStorage.getItem('user_id');
+            const serverUserid = "{{ user_id }}";
+            if (sessionUserid !== serverUserid) {
                 window.location.href = '{% url 'Dashboard'  %}';
             }
         };
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NFTArcadia Leaderboard</title>
+    <title>NFTArcadia-Leaderboard</title>
     <link rel="icon" type="image/png" href="{% static 'Img/crypto.png' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <script src="{% static 'js/metamasklogin.js' %}" ></script>
@@ -193,7 +193,7 @@
                     </button>
                     <div id="dropdownMenu" class="dropdown-menu">
                         <div class="nickname-display" id="nicknameDisplay">@{{username}}</div>
-                        <a  onclick = "return user_setting()" style = "cursor: pointer;">Settings</a>
+                        <a  onclick = "return user_setting()" style = "cursor: pointer;">Profile</a>
                         <a href="#">Leaderboard</a>
                         <a href="#" onclick = "return logout()" id="logoutLink">Log Out</a>
                     </div>
@@ -244,9 +244,9 @@
         }
 
         function user_setting(){
-            username = "{{username}}"
+            user_id = "{{user_id}}"
 
-            url = "{% url 'setting' 'username' %}".replace('username',username)
+            url = "{% url 'setting' 'user_id' %}".replace('user_id',user_id)
 
             window.location.href = url
         }

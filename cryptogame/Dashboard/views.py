@@ -11,6 +11,11 @@ import os
 import io
 from PIL import Image 
 
+from monsterapi import client
+import base64 
+import requests
+import random
+
 def dashboard(request):
     
     
@@ -39,8 +44,7 @@ def MetaMaskUser(request):
             if user_addr == True:
                 user_nickname = MetaUsers.objects.get(address=str(address))
                 
-                print(user_nickname.nickname)   
-                return JsonResponse({'status': 'user_exist', 'redirect_url': 'UserDashboard','username':str(user_nickname.nickname)})
+                return JsonResponse({'status': 'user_exist', 'redirect_url': 'UserDashboard','username':str(user_nickname.nickname),'user_id':str(user_nickname.user_id)})
                     
             else:
 
@@ -59,14 +63,15 @@ def save_nickname_address(request):
         nickname = data.get('nickname')
         address = data.get('address')
 
-        API_URL = "https://api-inference.huggingface.co/models/alvdansen/phantasma-anime"
+        '''API_URL = "https://api-inference.huggingface.co/models/alvdansen/phantasma-anime"
         headers = {"Authorization": "Bearer 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"}
-
+        '''
         
         try:
             
             
             check_nickname = MetaUsers.objects.filter(nickname=nickname).exists()
+            
             
             if check_nickname:
                
@@ -79,9 +84,12 @@ def save_nickname_address(request):
                     ) 
                     user.save()
                     
+                    get_user_id = MetaUsers.objects.get(address=address)
+                    
+
                     directory = "/home/om/Downloads/crypto_project-1/static/profilepicture/"
                     
-                    def query(payload):
+                    '''def query(payload):
                         response = requests.post(API_URL, headers=headers, json=payload)
                         
                         return response.content
@@ -93,9 +101,45 @@ def save_nickname_address(request):
                     
                     save_name = str(nickname) + ".png"
                     image_name= os.path.join(directory,str(save_name))
-                    image.save(image_name)
-                    
-                    return JsonResponse({'status':'success','redict_url': 'UserDashboard','username':nickname})
+                    image.save(image_name)'''
+                    api_key = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImY5Y2YxMTgyNjJlMDkyM2EzY2UyYjFjYjhiZmI2MGFmIiwiY3JlYXRlZF9hdCI6IjIwMjQtMDctMDRUMTE6NDM6MDIuMjM4OTkxIn0.pO5nxO6lX6P94GuH8jHJjhYS9ar1vtn3MEHxz8nCpQk'  
+                    monster_client = client(api_key)
+
+                    model = 'txt2img'  
+                    random_seed = random.randint(1, 10000)  
+
+                    input_data = {
+                    'prompt': 'anime character (single color background) ',
+                    'negprompt': 'deformed, bad anatomy, disfigured, poorly drawn face',
+                    'samples': 1,
+                    'steps': 50,
+                    'aspect_ratio': 'square',
+                    'guidance_scale': 7.5,
+                    'seed': random_seed,
+                                }
+                    result = monster_client.generate(model, input_data)
+
+                    image_filename = "generated_image.png"
+                    image_data = result['output'][0]
+
+                    if image_data.startswith("http"):
+                        # Handle the case where it's a URL
+                        image_filename = str(get_user_id.nickname)+".png"
+                        response = requests.get(image_data)
+                        with open(directory+image_filename, "wb") as f:
+                            f.write(response.content)
+                    else:
+                        # Assuming it's base64, handle padding issues
+                        missing_padding = len(image_data) % 4
+                        if missing_padding:
+                            image_data += '=' * (4 - missing_padding)
+
+                        # Decode and save the base64 image
+                        image_filename = str(get_user_id.nickname)+".png"
+                        
+                        with open(directory+image_filename, "wb") as f:
+                            f.write(base64.b64decode(image_data))
+                    return JsonResponse({'status':'success','redict_url': 'UserDashboard','username':nickname,"user_id":str(get_user_id.user_id)})
 
                 except Exception as e:
                     
@@ -127,41 +171,46 @@ def UserDashboard(request,username):
         'username': username,
         'profile_picture' : image_path,
         'coins': user_content.coins,
-        'gems': user_content.gems
+        'gems': user_content.gems,
+        'user_id': user_content.user_id,
     }
 
     return render(request,"/home/om/Downloads/crypto_project-1/static/html/user_dashboard.html",context)
     
 
-def leaderboard(request,username):
+def leaderboard(request,id):
     
-    image_path = str(username)+".png"
+    user_content = MetaUsers.objects.get(user_id=id)
+
+    image_path = str(user_content.nickname)+".png"
     
-    user_content = MetaUsers.objects.get(nickname=username)
     all_ranked_user = MetaUsers.objects.all()
     
     context = {
-        'username': username,
+        'username': user_content.nickname,
         'profile_picture' : image_path,
         'coins': user_content.coins,
         'gems': user_content.gems,
-        'rank': all_ranked_user
+        'rank': all_ranked_user,
+        'user_id':user_content.user_id
+        
         
     }
     return render(request,"/home/om/Downloads/crypto_project-1/static/html/Leaderboard.html",context)
 
-def setttings(request,username):
+def setttings(request,id):
+    user_content = MetaUsers.objects.get(user_id=str(id))
+
     
+    image_path = str(user_content.nickname)+".png"
     
-    image_path = str(username)+".png"
-    
-    user_content = MetaUsers.objects.get(nickname=username)
     
     context = {
-        'username': username,
+        'username': user_content.nickname,
         'profile_picture' : image_path,
         'coins': user_content.coins,
         'gems': user_content.gems,
+        'user_id':user_content.user_id
         
         
     } 
@@ -181,11 +230,12 @@ def changeusername(request):
             user.nickname = username
             
             user.save()
+            path_for_new = "/home/om/Downloads/crypto_project-1/static/profilepicture/"
             path = "/home/om/Downloads/crypto_project-1/static/profilepicture/"+str(previous_name)+".png"
 
             if os.path.exists(path):
                 
-                os.rename(path,username+".png")
+                os.rename(path,path_for_new+username+".png")
                 return JsonResponse({'status':'success'})
 
             else:

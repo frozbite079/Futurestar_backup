@@ -27,14 +27,18 @@ async function loginWithMetaMask() {
         
         else if(data.status ==="user_exist"){
 
+            
             var url = data.redirect_url
+            
             var user_nickname = data.username
+
+            var user_id = data.user_id
             
             //return handleMetaMaskResponse(url)
-            sessionStorage.setItem('username', user_nickname);
+            sessionStorage.setItem('user_id', user_id);
 
             window.location.href =  url+"/"+user_nickname;
-
+ 
 
         }
         else {

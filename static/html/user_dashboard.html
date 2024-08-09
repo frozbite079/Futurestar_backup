@@ -4,9 +4,9 @@
 <head>
     <script>
         window.onload = function() {
-            const sessionUsername = sessionStorage.getItem('username');
-            const serverUsername = "{{ username }}";
-            if (sessionUsername !== serverUsername) {
+            const sessionUserid = sessionStorage.getItem('user_id');
+            const serverUserid = "{{ user_id }}";
+            if (sessionUserid !== serverUserid) {
                 window.location.href = '{% url 'Dashboard'  %}';
             }
         };
@@ -14,7 +14,7 @@
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NFTArcadia</title>
+    <title>Dashboard-NFTArcadia</title>
     <link rel="icon" type="image/png" href="{% static 'Img/crypto.png' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <script src="{% static 'js/metamasklogin.js' %}" ></script>
@@ -192,7 +192,7 @@
                     </button>
                     <div id="dropdownMenu" class="dropdown-menu">
                         <div class="nickname-display" id="nicknameDisplay">@{{username}}</div>
-                        <a onclick = "return user_setting()" style = "cursor: pointer;">Settings</a>
+                        <a onclick = "return user_setting()" style = "cursor: pointer;">Profile</a>
                         <a onclick="return leaderboard()">Leaderboard</a>
                         <a href="#" onclick = "return logout()" id="logoutLink">Log Out</a>
                     </div>
@@ -291,8 +291,8 @@
 
     function leaderboard(){
         try{
-            username = "{{username}}"
-            url = "{% url 'leaderboard' 'username'%}".replace('username',username)
+            userid = "{{ user_id }}"
+            url = "{% url 'leaderboard' 'userid'%}".replace('userid',userid)
             window.location.href = url
         }
         catch(error){
@@ -305,9 +305,9 @@
 
     function user_setting(){
 
-        username = "{{username}}"
-
-        url = "{% url 'setting' 'username' %}".replace('username',username)
+    
+        userid = "{{user_id}}"
+        url = "{% url 'setting' 'userid' %}".replace('userid',userid)
 
         window.location.href = url
     }
