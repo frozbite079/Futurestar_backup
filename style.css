@@ -16,7 +16,7 @@ body {
 .bird {
     position: absolute;
     width: 100px;
-    height: 80px;
+    height: 100px;
     background-size: cover;
     cursor: pointer;
     transition: transform 0.5s linear;
@@ -24,11 +24,11 @@ body {
 }
 
 .bird.normal {
-    background-image: url('/home/om/Downloads/crypto_project-1/whitebird.png');
+    background-image: url('/home/om/Downloads/crypto_project-1/bird_new.gif');
 }
 
 .bird.silver {
-    background-image: url('/home/om/Downloads/crypto_project-1/silver.png');
+    background-image: url('/home/om/Downloads/crypto_project-1/bird_new.gif');
     width: 80px;
     height: 80px;
 }
