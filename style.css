@@ -1,0 +1,47 @@
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+#game-area {
+    width: 800px; 
+    height: 500px; 
+    background-color: lightblue;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #000;
+    margin: 0 auto; 
+}
+
+.bird {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background-size: cover;
+    cursor: pointer;
+    transition: transform 0.5s linear;
+
+}
+
+.bird.normal {
+    background-image: url('/home/om/Downloads/crypto_project-1/bird.png');
+}
+
+.bird.silver {
+    background-image: url('/home/om/Downloads/crypto_project-1/silver.png');
+    width: 80px;
+    height: 80px;
+}
+
+.bird.golden {
+    background-image: url('/home/om/Downloads/crypto_project-1/golden.png');
+}
+
+
+#score, #timer, #health {
+    margin-top: 20px;
+    font-size: 24px;
+}
+.bird.flip {
+    transform: scaleX(-1); 
+}
