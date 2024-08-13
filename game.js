@@ -118,7 +118,6 @@ function startTimer() {
     }, 1000);
 }
 
-// Function to start a new level
 function startLevel(level) {
     currentLevel = level;
     birdsShot = 0;
@@ -128,78 +127,80 @@ function startLevel(level) {
             totalBirds = 7;
             levelTime = 30;
             healthPoints = 5;
-            birdSpeed = 8; // Level 1 bird speed
+            birdSpeed = 8; 
             break;
         case 2:
             totalBirds = 12;
             levelTime = 30;
             healthPoints = 7;
-            birdSpeed = 6; // Level 2 bird speed
+            birdSpeed = 6; 
             break;
         case 3:
             totalBirds = 17;
             levelTime = 30;
             healthPoints = 9;
-            birdSpeed = 5.5; // Slightly faster for Level 3
+            birdSpeed = 5.5; 
             break;
         case 4:
             totalBirds = 22;
             levelTime = 30;
             healthPoints = 11;
-            birdSpeed = 5; // Faster for Level 4
+            birdSpeed = 5; 
             break;
         case 5:
             totalBirds = 27;
             levelTime = 40;
             healthPoints = 13;
-            birdSpeed = 4.5; // Faster for Level 5
+            birdSpeed = 4.5; 
             break;
         case 6:
             totalBirds = 32;
             levelTime = 40;
             healthPoints = 15;
-            birdSpeed = 4; // Faster for Level 6
+            birdSpeed = 4; 
             break;
         case 7:
             totalBirds = 37;
             levelTime = 40;
             healthPoints = 17;
-            birdSpeed = 3.5; // Increased speed for Level 7
+            birdSpeed = 3.5; 
             break;
         case 8:
             totalBirds = 42;
             levelTime = 40;
             healthPoints = 19;
-            birdSpeed = 3; // Increased speed for Level 8
+            birdSpeed = 3; 
             break;
         case 9:
             totalBirds = 50;
             levelTime = 40;
             healthPoints = 21;
-            birdSpeed = 2.5; // Increased speed for Level 9
+            birdSpeed = 2.5; 
+            break;
+
+        case 10:
+            totalBirds = 52;
+            levelTime = 40;
+            healthPoints = 21;
+            birdSpeed = 2; 
             break;
     }
 
     scoreDisplay.textContent = 'Score: ' + score;
     healthDisplay.textContent = 'Health: ' + healthPoints;
 
-    // Start spawning birds
     birdInterval = setInterval(createBird, 2500 - (level * 50)); // Decrease interval to increase difficulty
     startTimer();
 }
 
-// Function to move to the next level
 function startNextLevel() {
     let nextLevel = currentLevel + 1;
-    if (nextLevel <= 9) {
+    if (nextLevel <= 10) {
         startLevel(nextLevel);
     } else {
         alert('Congratulations! You completed all levels!');
     }
 }
 
-// Start Level 1 when the page loads
 startLevel(1);
 
-
-startLevel(1);
