@@ -249,8 +249,9 @@
             
         }
         function  gamepage(){
-            game_page_url = "{% url 'gameframe' %}"
-            window.location.href = game_page_url;
+            user_id = "{{user_id}}"
+            game_page_url = "{% url 'gameframe' 'user_id' %}".replace('user_id',user_id)
+            window.location.href = game_page_url
             return false;
 
         }

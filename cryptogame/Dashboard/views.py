@@ -247,6 +247,23 @@ def changeusername(request):
             return JsonResponse({'status':str(e)})
         
 
-def  gameFrame(request):
+def  gameFrame(request,id):
+    user_content = MetaUsers.objects.get(user_id=str(id))
+
     
-    return render(request,"/home/om/Downloads/crypto_project-1/static/html/gameplay.html")    
+    image_path = str(user_content.nickname)+".png"
+    
+    
+    context = {
+        'username': user_content.nickname,
+        'profile_picture' : image_path,
+        'coins': user_content.coins,
+        'gems': user_content.gems,
+        'user_id':user_content.user_id
+        
+        
+    } 
+    
+    
+    
+    return render(request,"/home/om/Downloads/crypto_project-1/static/html/gameplay.html",context)    

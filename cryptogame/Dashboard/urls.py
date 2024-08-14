@@ -10,7 +10,7 @@ urlpatterns = [
     path('leaderboard/<id>',leaderboard,name="leaderboard"),
     path('setting/<id>',setttings,name="setting"),
     path('usernamechange',changeusername,name="usernamechange"),
-    path('gameframe',gameFrame,name="gameframe")
+    path('gameframe/<id>',gameFrame,name="gameframe")
     
     
 ]
