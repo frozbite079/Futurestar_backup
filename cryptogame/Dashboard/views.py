@@ -246,4 +246,7 @@ def changeusername(request):
             print(e)
             return JsonResponse({'status':str(e)})
         
+
+def  gameFrame(request):
     
+    return render(request,"/home/om/Downloads/crypto_project-1/static/html/gameplay.html")    

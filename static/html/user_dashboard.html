@@ -215,7 +215,7 @@
     
     <section class="game-thumbnails">
         <div class="thumbnail-box">
-            <img src="{% static 'Img/duck.jpeg' %}" alt="Game 1">
+            <img onclick = "return gamepage()" src="{% static 'Img/duck.jpeg' %}" alt="Game 1">
         </div>
         <div class="thumbnail-box">
             <img src="{% static 'Img/comingsoon.jpeg' %}" alt="Game 2">
@@ -248,7 +248,12 @@
             }
             
         }
+        function  gamepage(){
+            game_page_url = "{% url 'gameframe' %}"
+            window.location.href = game_page_url;
+            return false;
 
+        }
         document.getElementById('nicknameForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const nickname = document.getElementById('nickname').value;

@@ -23,16 +23,16 @@ body {
 }
 
 .bird.normal {
-    background-image: url('/home/om/Downloads/crypto_project-1/bird.gif');
+    background-image: url("/static/css/gif/bird.gif");
 }
 
 .bird.silver {
-    background-image: url('/home/om/Downloads/crypto_project-1/blue.gif');
+    background-image: url("/static/css/gif/blue.gif");
 
 }
 
 .bird.golden {
-    background-image: url('/home/om/Downloads/crypto_project-1/golden.gif');
+    background-image: url('/static/css/gif/golden.gif');
 }
 
 
