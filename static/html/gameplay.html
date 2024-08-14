@@ -2,6 +2,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        window.onload = function() {
+            const sessionUserid = sessionStorage.getItem('user_id');
+            const serverUserid = "{{ user_id }}";
+            if (sessionUserid !== serverUserid) {
+                window.location.href = '{% url 'Dashboard'  %}';
+            }
+        };
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Play Game - NFTArcadia</title>
@@ -287,6 +296,27 @@
                 return false
             }
             
+        }
+
+        function leaderboard() {
+            try {
+                const userid= "{{ user_id }}";
+                const url = "{% url 'leaderboard' 'userid' %}".replace('userid', userid);
+
+                try{
+                    window.location.href = url;
+                }
+                catch(error){
+                    alert(error)
+                    return false
+                }
+                
+
+                
+            } catch (error) {
+                alert(error);
+                return false;
+            }
         }
 
         function logout(){
