@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
         gameArea.appendChild(healthDisplay); // Append to game area
 
         let score = 0;
+        let gems = 0;
         let birdsShot = 0;
         let totalBirds;
         let levelTime;
@@ -48,13 +49,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 notification.classList.remove('show-notification');
             }, 3000);
         }
-        
+
         function earnGems() {
             gemInterval = setInterval(() => {
                 gems++;
-                gemDisplay.textContent = 'Gems: ' + gems;
-            }, 60000); 
+                sendGemstoServer(gems)
+                //gemDisplay.textContent = 'Gems: ' + gems;
+                
+            }, 10000); 
+            
         }
+
+        function sendGemstoServer(gems){
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+            fetch('api/gemUpdate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ gems: gems })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Gems successfully sent to server:', data);
+            })
+            .catch(error => {
+                console.error('Error sending gems:', error);
+            });
+
+        }
+
 
         function createBird() {
             if (birdsShot >= totalBirds || healthPoints <= 0) return; 

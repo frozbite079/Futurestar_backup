@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import dashboard,MetaMaskUser,save_nickname_address,UserDashboard,leaderboard,setttings,changeusername , gameFrame
+from .views import dashboard,MetaMaskUser,save_nickname_address,UserDashboard,leaderboard,setttings,changeusername , gameFrame,updateGem
 
 
 urlpatterns = [
@@ -10,7 +10,8 @@ urlpatterns = [
     path('leaderboard/<id>',leaderboard,name="leaderboard"),
     path('setting/<id>',setttings,name="setting"),
     path('usernamechange',changeusername,name="usernamechange"),
-    path('gameframe/<id>',gameFrame,name="gameframe")
+    path('gameframe/<id>',gameFrame,name="gameframe"),
+    path('gemUpdate',updateGem,name="gemUpdate")    
     
     
 ]

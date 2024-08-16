@@ -267,3 +267,19 @@ def  gameFrame(request,id):
     
     
     return render(request,"/home/om/Downloads/crypto_project-1/static/html/gameplay.html",context)    
+
+@csrf_exempt
+def updateGem(request):
+    if request.method == 'POST':
+        print("yes")
+        data = json.loads(request.body)
+        gems = data.get('gems',0)
+        
+        print("gems ",gems)
+    
+    
+        
+        return JsonResponse({'status':'updated'})
+
+
+    return JsonResponse({'status': 'error','message': 'Invalid JSON'}, status=400)
