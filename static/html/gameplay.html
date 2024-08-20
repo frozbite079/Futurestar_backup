@@ -289,6 +289,10 @@
             box-shadow: 0 0 25px #ff9800, 0 0 35px #ff5722; /* Intensifies the glowing effect */
             transform: translate(-50%, -50%) scale(1.1); /* Slightly increases the size on hover */
         }
+        .user-id-class{
+
+            display: none;
+        }
 
         
 
@@ -303,14 +307,14 @@
         </div>
         <div class="coin-gem">
             <img src="{%static 'Img/coin.png' %}" alt="Coins" class="icon">
-            <span class="amount">{{coins}}</span>
+            <span id="coin-update" class="amount">{{coins}}</span>
         </div>
     </div>
     
     <div class="right-section">
         <div class="coin-gem">
             <img src="{% static 'Img/gem.png' %}" alt="Gems" class="icon">
-            <span class="amount">{{gems}}</span>
+            <span id="gem-update" class="amount">{{gems}}</span>
         </div>
         <div class="login-container">
             <div id="profileContainer" class="profile-container">
@@ -331,6 +335,7 @@
 
     
 </header>
+<p id = "user-id-for-gem-update" class = "user-id-class">{{user_id}}</p>
 
 
 <div id="logoutModal" class="modal">

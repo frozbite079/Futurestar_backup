@@ -268,18 +268,86 @@ def  gameFrame(request,id):
     
     return render(request,"/home/om/Downloads/crypto_project-1/static/html/gameplay.html",context)    
 
+
 @csrf_exempt
 def updateGem(request):
+    print("false")
     if request.method == 'POST':
-        print("yes")
         data = json.loads(request.body)
-        gems = data.get('gems',0)
+        gems = data.get('gems')
+        user_id = data.get('user_id')
+        print(gems)
         
-        print("gems ",gems)
+        
+        try:
+            gem_save = MetaUsers.objects.get(user_id = user_id)
+            
+            print(str(gem_save.gems))
+            
+            gem_save.gems = gem_save.gems+1
+            gem_save.save()
+            
+            
+            
+            return JsonResponse({'status':'updated','message':str(gem_save.gems)})
+
+            
+        except Exception as e:
+            return JsonResponse({'status': 'error','message': str(e)}, status=400)
+  
+
     
     
         
-        return JsonResponse({'status':'updated'})
 
 
     return JsonResponse({'status': 'error','message': 'Invalid JSON'}, status=400)
+@csrf_exempt
+def coinadding(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        coin = data.get('coin')
+        user_id = data.get('user_id')
+        
+        
+        
+        try:
+            coin_save = MetaUsers.objects.get(user_id = user_id)
+            
+            print(str(coin_save.gems))
+            
+            coin_save.coins = coin_save.coins+coin
+            coin_save.save()
+            
+            
+            
+            return JsonResponse({'status':'updated','message':str(coin_save.coins)})
+
+            
+        except Exception as e:
+            return JsonResponse({'status': 'error','message': str(e)}, status=400)
+  
+
+    
+    
+        
+
+
+    return JsonResponse({'status': 'error','message': 'Invalid JSON'}, status=400)
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+     

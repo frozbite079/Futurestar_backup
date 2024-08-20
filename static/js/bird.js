@@ -1,11 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     let gameArea = document.getElementById('game-area');
     let startGameButton = document.getElementById('start-game-button');
-    
+    let user_id = document.getElementById('user-id-for-gem-update')
     let timerDisplay = document.createElement('h2');
     let healthDisplay = document.createElement('h2'); 
-    let scoreDisplay = document.createElement('h2'); 
+    let scoreDisplay = document.createElement('h2');
     scoreDisplay.id = 'score';
+    let gem_update = document.getElementById('gem-update')
+    let coin_update = document.getElementById('coin-update')
+
+
+    let user_id_is = user_id.innerText
+    console.log(user_id_is)
     scoreDisplay.textContent = 'Score: 0'; // Initial score
 
     timerDisplay.id = 'timer';
@@ -53,27 +59,33 @@ document.addEventListener('DOMContentLoaded', function() {
         function earnGems() {
             gemInterval = setInterval(() => {
                 gems++;
+                //window.location.href = ""
                 sendGemstoServer(gems)
+                //sendGemstoServer(gems)
                 //gemDisplay.textContent = 'Gems: ' + gems;
                 
-            }, 10000); 
+            }, 60000); 
             
         }
 
         function sendGemstoServer(gems){
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    
-            fetch('api/gemUpdate', {
+            console.log(csrfToken)
+            fetch('/api/gemUpdate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrfToken
                 },
-                body: JSON.stringify({ gems: gems })
+                
+                body: JSON.stringify({ gems: gems,user_id:user_id_is})
             })
             .then(response => response.json())
             .then(data => {
                 console.log('Gems successfully sent to server:', data);
+                showNotification(`Congratulation you get a Gem 💎`);
+                gem_update.innerText = data.message
+
             })
             .catch(error => {
                 console.error('Error sending gems:', error);
@@ -121,13 +133,44 @@ document.addEventListener('DOMContentLoaded', function() {
                 switch (birdType) {
                     case 'silver':
                         birdValue = 2;
+                        coinadd(birdValue)
                         break;
                     case 'golden':
                         birdValue = 5;
+                        coinadd(birdValue)
                         break;
                     default:
                         birdValue = 1;
+                        coinadd(birdValue)
                 }
+
+                function coinadd(birdvalue){
+
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    console.log(csrfToken)
+                    fetch('/api/coinupdate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        },
+                        
+                        body: JSON.stringify({ coin: birdvalue,user_id:user_id_is})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('coin successfully sent to server:', data);
+                        //showNotification(`Congratulation you get a Gem 💎`);
+                        coin_update.innerText = data.message
+
+                    })
+                    .catch(error => {
+                        console.error('Error sending gems:', error);
+                    });
+
+                }
+                    
+                
                 score += birdValue;
                 birdsShot++;
                 scoreDisplay.textContent = 'Score: ' + score;
