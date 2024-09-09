@@ -14,7 +14,7 @@
     <meta name="csrf-token" content="{{ csrf_token }}">
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=`  `device-width, initial-scale=1.0">
     <title>Play Game - NFTArcadia</title>
     <link rel="icon" type="image/png" href="{% static 'Img/crypto.png' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
@@ -293,6 +293,41 @@
 
             display: none;
         }
+        #pause-play-button {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text */
+            border: none; /* Remove border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor */
+            z-index: 10; /* Ensure it is above other elements */
+            display: none; /* Initially hidden, will be shown during the game */
+        }
+
+        #pause-play-button:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+        #game-over-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 2px solid black;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        #play-again-button {
+            margin-top: 10px;
+        }
+
 
         
 
@@ -355,7 +390,10 @@
         <div id="game-area" class="game-frame"></div>
     </div>
 
-
+    <div id="game-over-popup" style="display: none;">
+        <h2>Game Over!</h2>
+        <button id="play-again-button">Play Again</button>
+    </div>
     <script>
            function dropdownmenu(){
             var dropdownMenu = document.getElementById('dropdownMenu');

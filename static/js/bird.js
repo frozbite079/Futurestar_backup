@@ -1,6 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
     let gameArea = document.getElementById('game-area');
     let startGameButton = document.getElementById('start-game-button');
+    let pausePlayButton = document.createElement('button');
+    pausePlayButton.id = 'pause-play-button';
+    pausePlayButton.textContent = 'Pause';
+   
+    gameArea.appendChild(pausePlayButton);
+
+    let isPaused = false;
+
     let user_id = document.getElementById('user-id-for-gem-update')
     let timerDisplay = document.createElement('h2');
     let healthDisplay = document.createElement('h2'); 
@@ -12,13 +20,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let user_id_is = user_id.innerText
     console.log(user_id_is)
-    scoreDisplay.textContent = 'Score: 0'; // Initial score
+    scoreDisplay.textContent = 'Score: 0'; 
 
     timerDisplay.id = 'timer';
-    timerDisplay.textContent = 'Time: 0s'; // Default text
+    timerDisplay.textContent = 'Time: 0s'; 
     
     healthDisplay.id = 'health';
-    healthDisplay.textContent = 'Health: 0'; // Default text
+    healthDisplay.textContent = 'Health: 0'; 
+    
 
     function setupGame() {
         gameArea.appendChild(scoreDisplay); // Append to the game area
@@ -59,10 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
         function earnGems() {
             gemInterval = setInterval(() => {
                 gems++;
-                //window.location.href = ""
                 sendGemstoServer(gems)
-                //sendGemstoServer(gems)
-                //gemDisplay.textContent = 'Gems: ' + gems;
                 
             }, 60000); 
             
@@ -127,7 +133,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 bird.remove();
                 decreaseHealth();
             });
-        
+            
+            function pauseGame() {
+                clearInterval(birdInterval);
+                clearInterval(timerInterval);
+                isPaused = true;
+                pausePlayButton.textContent = 'Play';
+            }
+
+            function resumeGame() {
+                startTimer(); 
+                birdInterval = setInterval(createBird, 2500 - (currentLevel * 50)); // Resumes bird creation
+                isPaused = false;
+                pausePlayButton.textContent = 'Pause';
+            }
+            
+            pausePlayButton.addEventListener('click', function() {
+                if (isPaused) {
+                    resumeGame();
+                } else {
+                    pauseGame();
+                }
+            });
+            
             bird.addEventListener('click', function () {
                 let birdValue;
                 switch (birdType) {
@@ -160,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     .then(response => response.json())
                     .then(data => {
                         console.log('coin successfully sent to server:', data);
-                        //showNotification(`Congratulation you get a Gem 💎`);
                         coin_update.innerText = data.message
 
                     })
@@ -312,12 +339,15 @@ document.addEventListener('DOMContentLoaded', function() {
         function startGame() {
             startGameButton.style.display = 'none'; // Hide the start button
             startGameButton.style.zIndex = '0'
-            setupGame(); // Set up the game
-            startLevel(1); // Start the first level
+            gameArea.appendChild(pausePlayButton); // Append the pause/play button to the game area
+            pausePlayButton.style.display = 'block'; // Ensure the button is visible
+
+            setupGame(); 
+            startLevel(1); 
         }
 
         startGameButton.addEventListener('click', startGame);
-        showStartButton(); // Ensure the button is shown initially
+        showStartButton(); 
     }
 
     setupGame();

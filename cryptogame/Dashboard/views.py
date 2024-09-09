@@ -10,7 +10,6 @@ import requests
 import os 
 import io
 from PIL import Image 
-
 from monsterapi import client
 import base64 
 import requests
@@ -37,6 +36,7 @@ def MetaMaskUser(request):
         recovered_address = Account.recover_message(message_hash, signature=signature)
 
         if recovered_address.lower() == address.lower():
+            
             user, created = User.objects.get_or_create(username=address)
             
             user_addr = MetaUsers.objects.filter(address=str(address)).exists()
@@ -117,24 +117,22 @@ def save_nickname_address(request):
                     'guidance_scale': 7.5,
                     'seed': random_seed,
                                 }
+                    
                     result = monster_client.generate(model, input_data)
 
                     image_filename = "generated_image.png"
                     image_data = result['output'][0]
 
                     if image_data.startswith("http"):
-                        # Handle the case where it's a URL
                         image_filename = str(get_user_id.nickname)+".png"
                         response = requests.get(image_data)
                         with open(directory+image_filename, "wb") as f:
                             f.write(response.content)
                     else:
-                        # Assuming it's base64, handle padding issues
                         missing_padding = len(image_data) % 4
                         if missing_padding:
                             image_data += '=' * (4 - missing_padding)
 
-                        # Decode and save the base64 image
                         image_filename = str(get_user_id.nickname)+".png"
                         
                         with open(directory+image_filename, "wb") as f:
@@ -193,27 +191,22 @@ def leaderboard(request,id):
         'gems': user_content.gems,
         'rank': all_ranked_user,
         'user_id':user_content.user_id
-        
-        
     }
     return render(request,"/home/om/Downloads/crypto_project-1/static/html/Leaderboard.html",context)
 
 def setttings(request,id):
     user_content = MetaUsers.objects.get(user_id=str(id))
 
-    
     image_path = str(user_content.nickname)+".png"
-    
     
     context = {
         'username': user_content.nickname,
         'profile_picture' : image_path,
         'coins': user_content.coins,
         'gems': user_content.gems,
-        'user_id':user_content.user_id
-        
-        
+        'user_id':user_content.user_id  
     } 
+    
     return render(request,"/home/om/Downloads/crypto_project-1/static/html/setting.html",context)
 
 def changeusername(request):
@@ -247,61 +240,45 @@ def changeusername(request):
             return JsonResponse({'status':str(e)})
         
 
-def  gameFrame(request,id):
+def gameFrame(request,id):
     user_content = MetaUsers.objects.get(user_id=str(id))
 
-    
     image_path = str(user_content.nickname)+".png"
-    
-    
+
     context = {
         'username': user_content.nickname,
         'profile_picture' : image_path,
         'coins': user_content.coins,
         'gems': user_content.gems,
         'user_id':user_content.user_id
-        
-        
     } 
-    
-    
-    
+
     return render(request,"/home/om/Downloads/crypto_project-1/static/html/gameplay.html",context)    
 
 
 @csrf_exempt
 def updateGem(request):
-    print("false")
     if request.method == 'POST':
         data = json.loads(request.body)
         gems = data.get('gems')
         user_id = data.get('user_id')
-        print(gems)
         
         
         try:
             gem_save = MetaUsers.objects.get(user_id = user_id)
             
-            print(str(gem_save.gems))
             
             gem_save.gems = gem_save.gems+1
             gem_save.save()
             
-            
-            
             return JsonResponse({'status':'updated','message':str(gem_save.gems)})
 
-            
         except Exception as e:
             return JsonResponse({'status': 'error','message': str(e)}, status=400)
-  
-
-    
-    
-        
-
 
     return JsonResponse({'status': 'error','message': 'Invalid JSON'}, status=400)
+
+
 @csrf_exempt
 def coinadding(request):
     if request.method == 'POST':
@@ -309,17 +286,12 @@ def coinadding(request):
         coin = data.get('coin')
         user_id = data.get('user_id')
         
-        
-        
         try:
             coin_save = MetaUsers.objects.get(user_id = user_id)
             
-            print(str(coin_save.gems))
             
             coin_save.coins = coin_save.coins+coin
             coin_save.save()
-            
-            
             
             return JsonResponse({'status':'updated','message':str(coin_save.coins)})
 
@@ -327,11 +299,6 @@ def coinadding(request):
         except Exception as e:
             return JsonResponse({'status': 'error','message': str(e)}, status=400)
   
-
-    
-    
-        
-
 
     return JsonResponse({'status': 'error','message': 'Invalid JSON'}, status=400)
     
